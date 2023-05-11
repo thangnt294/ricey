@@ -38,6 +38,8 @@ app.post("/webhook", async (req, res) => {
       // will only ever contain one event, so we get index 0
       let { sender, recipient, message } = entry.messaging[0];
 
+      console.log(`Received a message: ${message.text}`);
+
       await react(recipient.id, sender.id, "typing_on");
 
       // talk to chatGPT
