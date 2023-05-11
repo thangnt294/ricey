@@ -3,7 +3,7 @@ import sendMsgToGPT from "./openai.js";
 import { react, sendMsg } from "./facebook.js";
 import * as dotenv from "dotenv";
 import body_parser from "body-parser";
-import { FB_VERIFY_TOKEN, PORT } from "./constants.js";
+import { FB_VERIFY_TOKEN, FB_PAGE_ID, PORT } from "./constants.js";
 
 dotenv.config();
 
@@ -41,13 +41,13 @@ app.post("/webhook", async (req, res) => {
       if (sender && recipient && message) {
         console.log(`Received a message: ${message.text}`);
 
-        await react(recipient.id, sender.id, "typing_on");
+        await react(FB_PAGE_ID, sender.id, "typing_on");
 
         // talk to chatGPT
         const gptReply = await sendMsgToGPT(message.text);
-        await sendMsg(recipient.id, sender.id, gptReply);
+        await sendMsg(FB_PAGE_ID, sender.id, gptReply);
 
-        await react(recipient.id, sender.id, "typing_off");
+        await react(FB_PAGE_ID, sender.id, "typing_off");
       }
     });
     res.status(200).send("EVENT_RECEIVED");
