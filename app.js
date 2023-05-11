@@ -38,15 +38,17 @@ app.post("/webhook", async (req, res) => {
       // will only ever contain one event, so we get index 0
       let { sender, recipient, message } = entry.messaging[0];
 
-      console.log(`Received a message: ${message.text}`);
+      if (sender && recipient && message) {
+        console.log(`Received a message: ${message.text}`);
 
-      await react(recipient.id, sender.id, "typing_on");
+        await react(recipient.id, sender.id, "typing_on");
 
-      // talk to chatGPT
-      const gptReply = await sendMsgToGPT(message.text);
-      await sendMsg(recipient.id, sender.id, gptReply);
+        // talk to chatGPT
+        const gptReply = await sendMsgToGPT(message.text);
+        await sendMsg(recipient.id, sender.id, gptReply);
 
-      await react(recipient.id, sender.id, "typing_off");
+        await react(recipient.id, sender.id, "typing_off");
+      }
     });
     res.status(200).send("EVENT_RECEIVED");
   } else {
